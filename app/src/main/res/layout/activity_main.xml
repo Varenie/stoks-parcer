@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".Activities.MainActivity">
 
     <SearchView
         android:id="@+id/searchView"
@@ -28,7 +28,7 @@
 
 
         <androidx.viewpager.widget.ViewPager
-            android:id="@+id/vp_history"
+            android:id="@+id/vp_lists_of_stoks"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
