@@ -20,7 +20,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class PagerFragment: Fragment() {
-    private val TOKEN = "KNTxQtvGJzBGimsiX4JT8bcDiyfZsmEmpg2ZaWDi8V1dvl61NOZ53q9wnz6h"
+    private val TOKEN = "1vqZTzfB37LVfUawxdzocdbHs8gW28lYm10NWQ8EbGeOXMLMXNshINDpi914"
     private val BASE_URL = "https://mboum.com/api/v1"
 
     override fun onCreateView(
@@ -34,13 +34,13 @@ class PagerFragment: Fragment() {
         myRecycler.layoutManager = LinearLayoutManager(requireContext())
         myRecycler.setHasFixedSize(true)
 
-
-
         val client = HttpClient(CIO)
 
+        // запуск асинхронного потока
         GlobalScope.launch(Dispatchers.IO) {
             val data = getRequest()
 
+            //работа в основном потоке
             activity?.runOnUiThread {
                 val adapter = StoksRecyclerAdapter(data.count, data.quotes)
                 myRecycler.adapter = adapter
