@@ -7,25 +7,47 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.varenie.yandextest.DataBase.TableFavourites
 import com.varenie.yandextest.DataClasses.Stocks
 import com.varenie.yandextest.R
 import com.varenie.yandextest.databinding.RecyclerItemStocksBinding
 import java.text.FieldPosition
 
-class StoksRecyclerAdapter(private val size: Int, private val stocks: Array<Stocks>): RecyclerView.Adapter<StoksRecyclerAdapter.MyVHolder>() {
+class StoksRecyclerAdapter(private val size: Int, private val stocks: Array<Stocks?>): RecyclerView.Adapter<StoksRecyclerAdapter.MyVHolder>() {
     lateinit var binding: RecyclerItemStocksBinding
 
     class MyVHolder(private val binding: RecyclerItemStocksBinding): RecyclerView.ViewHolder(binding.root) {
+        val context = binding.root.context
 
-        fun bind(position: Int, stocks: Array<Stocks>){
-            binding.tvStockName.text = stocks[position].symbol
-            binding.tvCompanyName.text = stocks[position].name
-            binding.tvStockCost.text = stocks[position].price.toString()
 
-            if (stocks[position].change < 0)
+        fun bind(position: Int, stocks: Array<Stocks?>){
+            binding.tvStockName.text = stocks[position]?.symbol
+            binding.tvCompanyName.text = stocks[position]?.name
+            binding.tvStockCost.text = stocks[position]?.price.toString()
+
+            if (stocks[position]?.change!! < 0)
                 binding.tvStockChange.setTextColor(Color.RED)
 
-            binding.tvStockChange.text = "${stocks[position].change} (${stocks[position].percent}%)"
+            binding.tvStockChange.text = "${stocks[position]?.change} ${stocks[position]?.percent}"
+
+            var isChosen = false
+            binding.ivStar.setOnClickListener{
+                val tableFavourites =
+                        TableFavourites(context)
+
+                val ticker = binding.tvStockName.text.toString()
+
+                tableFavourites.addTicker(ticker)
+                tableFavourites.deleteTickers()
+
+                if (!isChosen) {
+                    binding.ivStar.setImageResource(R.drawable.star_chosen)
+                    isChosen = true
+                } else {
+                    binding.ivStar.setImageResource(R.drawable.star_unchosen)
+                    isChosen = false
+                }
+            }
         }
     }
 

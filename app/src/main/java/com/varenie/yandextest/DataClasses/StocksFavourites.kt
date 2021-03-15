@@ -2,8 +2,8 @@ package com.varenie.yandextest.DataClasses
 
 import com.google.gson.annotations.SerializedName
 
-data class Stocks(
-        @SerializedName("ticker")
+data class StocksFavourites(
+        @SerializedName("symbol")
         var symbol: String,
         @SerializedName("companyName")
         var name: String,
@@ -14,4 +14,3 @@ data class Stocks(
         @SerializedName("changesPercentage")
         var percent: String
 )
-

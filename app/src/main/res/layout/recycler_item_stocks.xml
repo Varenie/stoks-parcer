@@ -59,7 +59,7 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:layout_marginStart="5dp"
-                            android:src="@drawable/star_chosen"/>
+                            android:src="@drawable/star_unchosen"/>
                     </LinearLayout>
 
                     <TextView
