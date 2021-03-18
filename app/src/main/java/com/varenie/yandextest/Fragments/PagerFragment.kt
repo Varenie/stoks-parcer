@@ -39,24 +39,20 @@ class PagerFragment: Fragment() {
 
         val client = HttpClient(CIO)
         val arguments = arguments
-        var pos: String = ""
+        var pos = 0
 
         arguments?.let {
-            pos = it.getString("position").toString()
+            pos = it.getInt("ARG")
         }
 
         // запуск асинхронного потока
         GlobalScope.launch(Dispatchers.IO) {
-            var data: Array<Stocks?>
-            if (pos.compareTo("1") == 0) {
+            var data: ArrayList<Stocks>
+            if (pos == 1) {
                 val tableFavourites = TableFavourites(requireContext())
                 val tickers = tableFavourites.getTickers()
-
-                data = arrayOfNulls(0)
-
-                if (tickers.compareTo("") != 0) {
-                    data = getFavouriteRequest(tickers)
-                }
+                Log.e("TCKRTEST", tickers)
+                data = getFavouriteRequest(tickers)
             } else {
                 data = getRequest()
 
@@ -73,34 +69,41 @@ class PagerFragment: Fragment() {
 
     }
 
-    private suspend fun getFavouriteRequest(tickers: String): Array<Stocks?> {
+    private suspend fun getFavouriteRequest(tickers: String): ArrayList<Stocks> {
+
         HttpClient().use {
-            val response: String = it.get("$BASE_URL/quote/$tickers?apikey=$TOKEN")
-            val gson = Gson()
+            if (tickers.compareTo("") != 0) {
+                val response: String = it.get("$BASE_URL/quote/$tickers?apikey=$TOKEN")
+                val gson = Gson()
 
-            val stocks = gson.fromJson(response, Array<StocksFavourites>::class.java)
-            var data = arrayOfNulls<Stocks>(stocks.size)
+                val stocks = gson.fromJson(response, Array<StocksFavourites>::class.java)
+                val data: ArrayList<Stocks> = arrayListOf()
 
-            for ((i, x) in stocks.withIndex()){
-                data[i]?.symbol = x.symbol
-                data[i]?.name = x.name
-                data[i]?.price = x.price
-                data[i]?.change = x.change
-                data[i]?.percent = x.percent
+                for ((i, x) in stocks.withIndex()) {
+                    val element = Stocks(x.symbol, x.name, x.price, x.change, x.percent)
+                    data.add(element)
+                }
+
+                return data
+            } else {
+                return  arrayListOf()
             }
-
-            return data
         }
     }
 
-    private suspend fun getRequest(): Array<Stocks?> {
+    private suspend fun getRequest(): ArrayList<Stocks> {
         HttpClient().use {
             val response: String = it.get("$BASE_URL/actives?apikey=$TOKEN")
             val gson = Gson()
 
-            val stocks = gson.fromJson(response, Array<Stocks?>::class.java)
+            val stocks = gson.fromJson(response, Array<Stocks>::class.java)
 
-           return stocks
+            val data: ArrayList<Stocks> = arrayListOf()
+
+            for (x in stocks) {
+                data.add(x)
+            }
+           return data
         }
     }
 }

@@ -7,23 +7,38 @@
     android:layout_height="match_parent"
     tools:context=".Activities.MainActivity">
 
-    <SearchView
-        android:id="@+id/searchView"
+    <LinearLayout
+        android:id="@+id/ll_search_block"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023" />
+        android:layout_height="wrap_content">
+
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.023"
+            android:layout_weight="0.9"/>
+
+        <Button
+            android:id="@+id/btn_research"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_weight="0.1"
+            android:onClick="research"/>
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/ll_history_block"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_below="@+id/searchView"
+        android:layout_below="@+id/ll_search_block"
         android:layout_marginTop="5dp">
 
 

@@ -2,8 +2,10 @@ package com.varenie.yandextest.Activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.viewpager.widget.ViewPager
 import com.varenie.yandextest.Adapters.MyPagerAdapter
+import com.varenie.yandextest.Fragments.PagerFragment
 import com.varenie.yandextest.R
 
 class MainActivity : AppCompatActivity() {
@@ -15,5 +17,9 @@ class MainActivity : AppCompatActivity() {
 
         val myAdapter = MyPagerAdapter(supportFragmentManager)
         viewPager.adapter = myAdapter
+    }
+
+    fun research(view: View) {
+
     }
 }
