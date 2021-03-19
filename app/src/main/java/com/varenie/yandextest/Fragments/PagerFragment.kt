@@ -49,6 +49,7 @@ class PagerFragment: Fragment() {
         GlobalScope.launch(Dispatchers.IO) {
             var data: ArrayList<Stocks>
             if (pos == 1) {
+
                 val tableFavourites = TableFavourites(requireContext())
                 val tickers = tableFavourites.getTickers()
                 Log.e("TCKRTEST", tickers)
