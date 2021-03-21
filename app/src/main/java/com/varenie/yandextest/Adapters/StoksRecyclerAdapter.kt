@@ -1,6 +1,5 @@
 package com.varenie.yandextest.Adapters
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -9,11 +8,10 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.varenie.yandextest.Activities.ChartActivity
-import com.varenie.yandextest.DataBase.TableFavourites
+import com.varenie.yandextest.DataBase.TableStocks
 import com.varenie.yandextest.DataClasses.Stocks
 import com.varenie.yandextest.R
 import com.varenie.yandextest.databinding.RecyclerItemStocksBinding
-import java.text.FieldPosition
 
 class StoksRecyclerAdapter(private val size: Int, private val stocks: ArrayList<Stocks>): RecyclerView.Adapter<StoksRecyclerAdapter.MyVHolder>() {
     lateinit var binding: RecyclerItemStocksBinding
@@ -40,9 +38,10 @@ class StoksRecyclerAdapter(private val size: Int, private val stocks: ArrayList<
             if (stocks[position].change < 0)
                 binding.tvStockChange.setTextColor(Color.RED)
 
-            val tableFavourites = TableFavourites(context)
-
             binding.tvStockChange.text = "${stocks[position]?.change} ${stocks[position]?.percent}"
+
+            val tableFavourites = TableStocks(context)
+            val stock = stocks[position]
 
             var isChosen = false
             val ticker = binding.tvStockName.text.toString()
@@ -65,11 +64,11 @@ class StoksRecyclerAdapter(private val size: Int, private val stocks: ArrayList<
                 if (!isChosen) {
                     binding.ivStar.setImageResource(R.drawable.star_chosen)
                     //isChosen = true
-                    tableFavourites.addTicker(ticker)
+                    tableFavourites.addFavourite(stock)
                 } else {
                     binding.ivStar.setImageResource(R.drawable.star_unchosen)
                     //isChosen = false
-                    tableFavourites.deleteTicker(ticker)
+                    tableFavourites.deleteFavourite(ticker)
                 }
             }
         }

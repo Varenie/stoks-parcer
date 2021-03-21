@@ -1,57 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".Activities.MainActivity">
-
-    <LinearLayout
-        android:id="@+id/ll_search_block"
+<layout>
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        tools:context=".Activities.MainActivity">
 
-        <SearchView
-            android:id="@+id/searchView"
+        <LinearLayout
+            android:id="@+id/ll_search_block"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.023"
-            android:layout_weight="0.9"/>
+            android:layout_height="wrap_content">
 
-        <Button
-            android:id="@+id/btn_research"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_weight="0.1"
-            android:onClick="research"/>
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/ll_history_block"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_below="@+id/ll_search_block"
-        android:layout_marginTop="5dp">
-
-
-        <androidx.viewpager.widget.ViewPager
-            android:id="@+id/vp_lists_of_stoks"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.viewpager.widget.PagerTitleStrip
+            <SearchView
+                android:id="@+id/searchView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.023"
+                android:layout_weight="0.9"/>
+        </LinearLayout>
 
-        </androidx.viewpager.widget.ViewPager>
-    </LinearLayout>
-</RelativeLayout>
+        <LinearLayout
+            android:id="@+id/ll_buttons_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_below="@+id/ll_search_block"
+            android:layout_marginTop="5dp">
+
+            <Button
+                android:id="@+id/btn_stocks"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:fontFamily="@font/montserrat"
+                android:text="@string/stocks" />
+
+            <Button
+                android:id="@+id/btn_favourites"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.5"
+                android:fontFamily="@font/montserrat"
+                android:text="@string/favourites" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_history_block"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_below="@+id/ll_buttons_block"
+            android:layout_marginTop="5dp">
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_stocks"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/recycler_item_stocks"/>
+
+
+        </LinearLayout>
+    </RelativeLayout>
+</layout>
