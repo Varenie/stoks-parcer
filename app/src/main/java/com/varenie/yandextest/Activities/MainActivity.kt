@@ -2,6 +2,8 @@ package com.varenie.yandextest.Activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.InputFilter
+import android.text.InputType
 import android.util.Log
 import android.widget.SearchView
 import androidx.databinding.DataBindingUtil
@@ -57,6 +59,7 @@ class MainActivity : AppCompatActivity() {
             loadStocks(ID_STOCkS_PAGE)
         }
 
+        binding.searchView.inputType = InputType.TYPE_CLASS_NUMBER;
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 Log.d("TESTSEACRH", "onQueryTextSubmit: $query")
