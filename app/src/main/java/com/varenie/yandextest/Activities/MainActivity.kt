@@ -2,7 +2,6 @@ package com.varenie.yandextest.Activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.InputFilter
 import android.text.InputType
 import android.util.Log
 import android.widget.SearchView
@@ -22,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.ceil
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,8 +41,10 @@ class MainActivity : AppCompatActivity() {
         binding.rvStocks.layoutManager = LinearLayoutManager(this)
         binding.rvStocks.setHasFixedSize(true)
 
+        val firstCallTime = ceil(System.currentTimeMillis() / 1_600_000.0).toLong() * 1_600_000
         GlobalScope.launch {
 
+            delay(firstCallTime - System.currentTimeMillis()) //откладывает до ближайшего получаса (например: 17:30, 18:00)
             while (true) {
                 updateStocks()
                 delay(1_600_000)  // обновление каждые 30 минут

@@ -2,6 +2,7 @@ package com.varenie.yandextest.Adapters
 
 import android.content.Intent
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,8 @@ import com.varenie.yandextest.DataBase.TableStocks
 import com.varenie.yandextest.DataClasses.Stocks
 import com.varenie.yandextest.R
 import com.varenie.yandextest.databinding.RecyclerItemStocksBinding
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 class StoksRecyclerAdapter(private val size: Int, private val stocks: ArrayList<Stocks>): RecyclerView.Adapter<StoksRecyclerAdapter.MyVHolder>() {
     lateinit var binding: RecyclerItemStocksBinding
@@ -35,10 +38,20 @@ class StoksRecyclerAdapter(private val size: Int, private val stocks: ArrayList<
             binding.tvCompanyName.text = stocks[position].name
             binding.tvStockCost.text = stocks[position].price.toString()
 
-            if (stocks[position].change < 0)
-                binding.tvStockChange.setTextColor(Color.RED)
+            val percent = stocks[position].percent
+            val percentFormat = percent.substringBefore("%").substringAfter("+").substringAfter("-")// api возвращает проценты либо в формате (+3.12%), либо 0.07000000. Для этогт приводим к общему виду
 
-            binding.tvStockChange.text = "${stocks[position]?.change} ${stocks[position]?.percent}"
+            //для округления слишком длинных значений
+            val percentNum = percentFormat.toFloat()
+            val df = DecimalFormat("#.##")
+            df.roundingMode = RoundingMode.CEILING
+
+            if (stocks[position].change < 0) {
+                binding.tvStockChange.setTextColor(Color.RED)
+                binding.tvStockChange.text = "${stocks[position]?.change} (-${df.format(percentNum)}%)"
+            } else {
+                binding.tvStockChange.text ="${stocks[position]?.change} (+${df.format(percentNum)}%)"
+            }
 
             val tableFavourites = TableStocks(context)
             val stock = stocks[position]

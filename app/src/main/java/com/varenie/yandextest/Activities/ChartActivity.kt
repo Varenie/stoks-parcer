@@ -1,5 +1,6 @@
 package com.varenie.yandextest.Activities
 
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +20,6 @@ import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-
 
 class ChartActivity : AppCompatActivity() {
     private val TOKEN = "24eb674774bb515d57e84b21973fd4cb"
@@ -51,8 +51,10 @@ class ChartActivity : AppCompatActivity() {
                 }
             }
 
-            val max = prices.max()!!
-            val min = prices.min()!!
+            val max = prices.maxOrNull()
+            val min = prices.minOrNull()
+
+            val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
 
             val dataSet = LineDataSet(entries, "Акции")
             dataSet.axisDependency = YAxis.AxisDependency.LEFT
@@ -61,6 +63,14 @@ class ChartActivity : AppCompatActivity() {
             dataSet.lineWidth = 2f
             dataSet.setCircleColor(Color.RED)
 
+            when (currentNightMode) {
+                Configuration.UI_MODE_NIGHT_NO -> { // Night mode is not active, we're using the light theme
+                    dataSet.valueTextColor = Color.BLACK
+                }
+                Configuration.UI_MODE_NIGHT_YES -> {// Night mode is active, we're using dark theme
+                    dataSet.valueTextColor = Color.WHITE
+                }
+            }
 
             val lineData = LineData(dataSet)
 
@@ -69,6 +79,7 @@ class ChartActivity : AppCompatActivity() {
             runOnUiThread {
                 val chart = findViewById<LineChart>(R.id.chart)
                 chart.data = lineData
+
 
                 chart.axisRight.isEnabled = false
                 chart.xAxis.valueFormatter = MyAxisFormatter(dates) //отображение дат
@@ -81,17 +92,30 @@ class ChartActivity : AppCompatActivity() {
                 leftAxis.setDrawZeroLine(false)
                 leftAxis.setDrawGridLines(false)
 
-                val lMax = LimitLine(max, "Maximum")
-                lMax.lineColor = Color.GREEN
-                lMax.lineWidth = 2f
-                lMax.textColor = Color.BLACK
-                lMax.textSize = 12f
+                val lMax = max?.let { LimitLine(it, "Maximum") }
+                lMax?.lineColor = Color.GREEN
+                lMax?.lineWidth = 2f
 
-                val lMin = LimitLine(min, "Minimum")
-                lMin.lineColor = Color.RED
-                lMin.lineWidth = 2f
-                lMin.textColor = Color.BLACK
-                lMin.textSize = 12f
+                lMax?.textSize = 12f
+
+                val lMin = min?.let { LimitLine(it, "Minimum") }
+                lMin?.lineColor = Color.RED
+                lMin?.lineWidth = 2f
+
+                lMin?.textSize = 12f
+
+                when (currentNightMode) {
+                    Configuration.UI_MODE_NIGHT_NO -> { // Night mode is not active, we're using the light theme
+                        lMax?.textColor = Color.BLACK
+                        lMin?.textColor = Color.BLACK
+                        chart.description.textColor = Color.BLACK
+                    }
+                    Configuration.UI_MODE_NIGHT_YES -> {// Night mode is active, we're using dark theme
+                        lMax?.textColor = Color.WHITE
+                        lMin?.textColor = Color.WHITE
+                        chart.legend.textColor = Color.WHITE
+                    }
+                }
 
                 leftAxis.addLimitLine(lMax)
                 leftAxis.addLimitLine(lMin)
@@ -101,7 +125,7 @@ class ChartActivity : AppCompatActivity() {
         }
     }
 
-    private suspend fun getHistory(ticker: String): Array<TickerHistory>? {
+    private suspend fun getHistory(ticker: String): Array<TickerHistory> {
         HttpClient().use {
             val response: String = it.get("$BASE_URL/historical-chart/4hour/$ticker?apikey=$TOKEN")
             val gson = Gson()
