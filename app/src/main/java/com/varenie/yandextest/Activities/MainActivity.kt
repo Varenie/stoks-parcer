@@ -1,12 +1,16 @@
 package com.varenie.yandextest.Activities
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.InputType
-import android.util.Log
+import android.view.View
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.varenie.yandextest.Adapters.StoksRecyclerAdapter
 import com.varenie.yandextest.DataBase.TableStocks
@@ -21,6 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.regex.Pattern
 import kotlin.math.ceil
 
 class MainActivity : AppCompatActivity() {
@@ -41,6 +46,12 @@ class MainActivity : AppCompatActivity() {
         binding.rvStocks.layoutManager = LinearLayoutManager(this)
         binding.rvStocks.setHasFixedSize(true)
 
+        val tableStocks = TableStocks(this)
+
+        if (tableStocks.isEmpty()){ //если пользователь заходит первый раз, то загружаем данные сразу, а не дожидаясь конкретного времени
+            updateStocks()
+        }
+
         val firstCallTime = ceil(System.currentTimeMillis() / 1_600_000.0).toLong() * 1_600_000
         GlobalScope.launch {
 
@@ -53,33 +64,47 @@ class MainActivity : AppCompatActivity() {
 
         loadStocks(ID_STOCkS_PAGE)
 
+        binding.btnStocks.setBackgroundColor(Color.parseColor("#FF6200EE"))
+
         binding.btnFavourites.setOnClickListener {
             loadStocks(ID_FAVOURITES_PAGE)
+            binding.btnFavourites.setBackgroundColor(Color.parseColor("#FF6200EE"))
+            binding.btnStocks.setBackgroundColor(Color.parseColor("#121212"))
         }
 
         binding.btnStocks.setOnClickListener {
             loadStocks(ID_STOCkS_PAGE)
+            binding.btnFavourites.setBackgroundColor(Color.parseColor("#121212"))
+            binding.btnStocks.setBackgroundColor(Color.parseColor("#FF6200EE"))
         }
 
-        binding.searchView.inputType = InputType.TYPE_CLASS_NUMBER;
+
+
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                Log.d("TESTSEACRH", "onQueryTextSubmit: $query")
 
-                if (query != null) {
+
+                if (isRightQuery(query) && query != null) {
                     val upperQuery = query.toUpperCase()
                     loadStocks(ID_SEARCH_PAGE, upperQuery)
+                } else {
+                    Toast.makeText(this@MainActivity, "Incorrect input!", Toast.LENGTH_SHORT).show()
+                    binding.searchView.setQuery("", false)
                 }
 
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                Log.d("TESTSEACRH", "onQueryTextChange: $newText")
                 return false
             }
         })
 
+    }
+
+    private fun isRightQuery(query: String?): Boolean {
+        val queryPattern = Pattern.compile("[a-zA-Z]+?")
+        return queryPattern.matcher(query).matches()
     }
 
     private fun updateStocks() {
@@ -87,7 +112,6 @@ class MainActivity : AppCompatActivity() {
 
         GlobalScope.launch(Dispatchers.IO) {
             val defaultStocks = getDefaultRequest()
-            Log.e("COURUTINESTEST", defaultStocks[0].toString())
 
             tableStocks.cleanCashe()    //очищаем кэш, так как наиболее активные тикеры могут измениться
             tableStocks.addCashe(defaultStocks) //загружаем в таблицу новые значения

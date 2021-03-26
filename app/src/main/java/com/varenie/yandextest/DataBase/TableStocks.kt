@@ -2,7 +2,6 @@ package com.varenie.yandextest.DataBase
 
 import android.content.ContentValues
 import android.content.Context
-import android.util.Log
 import com.varenie.yandextest.DataBase.DBHelperStocks.Companion.COLUMN_CHANGE
 import com.varenie.yandextest.DataBase.DBHelperStocks.Companion.COLUMN_CHANGE_PERCENTAGE
 import com.varenie.yandextest.DataBase.DBHelperStocks.Companion.COLUMN_FULL_NAME
@@ -137,18 +136,6 @@ class TableStocks(context: Context) {
         db.update(TABLE_NAME, values, "$COLUMN_TICKER = ? AND $COLUMN_IS_FAVORITE = ?", arrayOf(stock.symbol, "TRUE"))
     }
 
-    fun showTable(){
-        cursor = db.query(TABLE_NAME, arrayOf(COLUMN_TICKER),
-            null, null, null, null, null)
-        cursor.moveToFirst()
-
-        Log.e("PROVEROCHKA", "syka ${cursor.count}")
-        while (cursor.moveToNext()) {
-            Log.e("PROVEROCHKA", "blya ${cursor.getString(1)}")
-        }
-
-    }
-
     fun deleteFavourite(ticker: String){
         db.delete(TABLE_NAME, "$COLUMN_TICKER = ? AND $COLUMN_IS_FAVORITE = ?", arrayOf(ticker, "TRUE"))
     }
@@ -166,5 +153,11 @@ class TableStocks(context: Context) {
 
     fun cleanCashe() {
         db.delete(TABLE_NAME, "$COLUMN_IS_FAVORITE = ?", arrayOf("FALSE"))
+    }
+
+    fun isEmpty(): Boolean {
+        cursor = db.query(TABLE_NAME, arrayOf(COLUMN_TICKER),
+            null, null, null, null, null)
+        return cursor.count == 0
     }
 }
