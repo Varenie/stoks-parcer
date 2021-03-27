@@ -1,9 +1,12 @@
 package com.varenie.yandextest.Activities
 
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.YAxis
@@ -11,9 +14,11 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.google.gson.Gson
+import com.varenie.yandextest.DataBase.TableStocks
 import com.varenie.yandextest.DataClasses.TickerHistory
 import com.varenie.yandextest.R
 import com.varenie.yandextest.ValueFormatter.MyAxisFormatter
+import com.varenie.yandextest.databinding.ActivityChartBinding
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
@@ -25,14 +30,46 @@ class ChartActivity : AppCompatActivity() {
     private val TOKEN = "24eb674774bb515d57e84b21973fd4cb"
     private val BASE_URL = "https://financialmodelingprep.com/api/v3"
 
+    lateinit var binding: ActivityChartBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_chart)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_chart)
+//        setContentView(R.layout.activity_chart)
 
-        val client = HttpClient(CIO)
-
+        var isChosen = false
         val intent = intent
-        val ticker = intent?.let {  it.getStringExtra("ticker") }
+        val ticker = intent?.getStringExtra("ticker")
+
+        binding.tvSymbol.text = ticker
+
+        val tableStocks = TableStocks(this)
+
+        if (tableStocks.isFavourite(ticker)){
+            binding.ivStar.setImageResource(R.drawable.star_chosen)
+            isChosen = true
+        }
+
+        binding.ivStar.setOnClickListener {
+            if (isChosen) {
+                tableStocks.deleteFavourite(ticker)
+                binding.ivStar.setImageResource(R.drawable.star_unchosen)
+                isChosen = false
+            } else {
+                val stock = tableStocks.getStock(ticker)
+                tableStocks.addFavourite(stock)
+                binding.ivStar.setImageResource(R.drawable.star_chosen)
+                isChosen = true
+            }
+        }
+
+        binding.btnNews.setOnClickListener {
+            val intent = Intent(this, NewsActivity::class.java)
+            intent.putExtra("ticker", ticker)
+            startActivity(intent)
+        }
+
+
         // запуск асинхронного потока
         GlobalScope.launch(Dispatchers.IO) {
 
@@ -77,17 +114,16 @@ class ChartActivity : AppCompatActivity() {
 
             //работа в основном потоке
             runOnUiThread {
-                val chart = findViewById<LineChart>(R.id.chart)
-                chart.data = lineData
+                binding.chart.data = lineData
 
 
-                chart.axisRight.isEnabled = false
-                chart.xAxis.valueFormatter = MyAxisFormatter(dates) //отображение дат
-                chart.description.isEnabled = false
-                chart.setDrawBorders(true)
-                chart.invalidate() // refresh
+                binding.chart.axisRight.isEnabled = false
+                binding.chart.xAxis.valueFormatter = MyAxisFormatter(dates) //отображение дат
+                binding.chart.description.isEnabled = false
+                binding.chart.setDrawBorders(true)
+                binding.chart.invalidate() // refresh
 
-                val leftAxis = chart.axisLeft
+                val leftAxis = binding.chart.axisLeft
                 leftAxis.setDrawAxisLine(false)
                 leftAxis.setDrawZeroLine(false)
                 leftAxis.setDrawGridLines(false)
@@ -108,12 +144,12 @@ class ChartActivity : AppCompatActivity() {
                     Configuration.UI_MODE_NIGHT_NO -> { // Night mode is not active, we're using the light theme
                         lMax?.textColor = Color.BLACK
                         lMin?.textColor = Color.BLACK
-                        chart.description.textColor = Color.BLACK
+                        binding.chart.description.textColor = Color.BLACK
                     }
                     Configuration.UI_MODE_NIGHT_YES -> {// Night mode is active, we're using dark theme
                         lMax?.textColor = Color.WHITE
                         lMin?.textColor = Color.WHITE
-                        chart.legend.textColor = Color.WHITE
+                        binding.chart.legend.textColor = Color.WHITE
                     }
                 }
 

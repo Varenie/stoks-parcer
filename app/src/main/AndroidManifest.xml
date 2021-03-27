@@ -10,8 +10,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.YandexTest">
-        <activity android:name=".Activities.ChartActivity"></activity>
+        android:theme="@style/Theme.YandexTest"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".Activities.NewsActivity"></activity>
+        <activity android:name=".Activities.ChartActivity" />
         <activity android:name=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

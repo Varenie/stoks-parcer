@@ -2,4 +2,11 @@
     <string name="app_name">yandexTest</string>
     <string name="stocks">Stocks</string>
     <string name="favourites">Favourites</string>
+    <string name="chart">Chart</string>
+    <string name="news">News</string>
+    <string name="site">site</string>
+    <string name="title">title</string>
+    <string name="date">22.02.2020</string>
+    <string name="url">URL</string>
+    <string name="some_text">Some text</string>
 </resources>

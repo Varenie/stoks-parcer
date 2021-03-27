@@ -1,16 +1,12 @@
 package com.varenie.yandextest.Activities
 
 import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.InputType
-import android.view.View
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.google.gson.Gson
 import com.varenie.yandextest.Adapters.StoksRecyclerAdapter
 import com.varenie.yandextest.DataBase.TableStocks
@@ -187,14 +183,9 @@ class MainActivity : AppCompatActivity() {
             val response: String = it.get("$BASE_URL/actives?apikey=$TOKEN")
             val gson = Gson()
 
-            val stocks = gson.fromJson(response, Array<Stocks>::class.java)
+            val stocks = gson.fromJson(response, Array<Stocks>::class.java).toCollection(ArrayList<Stocks>())
 
-            val data: ArrayList<Stocks> = arrayListOf()
-
-            for (x in stocks) {
-                data.add(x)
-            }
-            return data
+            return stocks
         }
     }
 }

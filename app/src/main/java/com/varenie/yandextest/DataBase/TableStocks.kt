@@ -94,6 +94,19 @@ class TableStocks(context: Context) {
         return response
     }
 
+    fun getStock(ticker: String?): Stocks {
+        cursor = db.rawQuery("SELECT * FROM $TABLE_NAME WHERE $COLUMN_TICKER = ?", arrayOf(ticker))
+        cursor.moveToFirst()
+
+        return Stocks(
+            cursor.getString(indexTicker),
+            cursor.getString(indexName),
+            cursor.getFloat(indexPrice),
+            cursor.getFloat(indexChange),
+            cursor.getString(indexChangePercentage)
+        )
+    }
+
     fun addFavourite(stock: Stocks){
         val values = ContentValues().apply {
             put(COLUMN_TICKER, stock.symbol)
@@ -136,7 +149,7 @@ class TableStocks(context: Context) {
         db.update(TABLE_NAME, values, "$COLUMN_TICKER = ? AND $COLUMN_IS_FAVORITE = ?", arrayOf(stock.symbol, "TRUE"))
     }
 
-    fun deleteFavourite(ticker: String){
+    fun deleteFavourite(ticker: String?){
         db.delete(TABLE_NAME, "$COLUMN_TICKER = ? AND $COLUMN_IS_FAVORITE = ?", arrayOf(ticker, "TRUE"))
     }
 
@@ -144,7 +157,7 @@ class TableStocks(context: Context) {
         db.delete(TABLE_NAME, "", arrayOf())
     }
 
-    fun isFavourite(ticker: String): Boolean {
+    fun isFavourite(ticker: String?): Boolean {
         cursor = db.rawQuery("SELECT * FROM $TABLE_NAME WHERE $COLUMN_TICKER = ?" +
                 "AND $COLUMN_IS_FAVORITE = ?", arrayOf(ticker, "TRUE"))
 

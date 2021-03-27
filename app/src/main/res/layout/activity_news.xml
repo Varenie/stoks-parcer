@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout>
     <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".Activities.ChartActivity">
+        tools:context=".Activities.NewsActivity">
 
         <LinearLayout
             android:id="@+id/ll_info"
@@ -51,16 +52,16 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/ll_chart"
+            android:id="@+id/ll_recycler"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/ll_info"
-            android:weightSum="0.9">
+            android:layout_below="@+id/ll_info">
 
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/chart"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_news"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                tools:listitem="@layout/recycler_item_news"/>
         </LinearLayout>
 
     </RelativeLayout>
