@@ -1,5 +1,6 @@
 package com.varenie.yandextest.Activities
 
+import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.varenie.yandextest.Adapters.NewsRecyclerAdapter
 import com.varenie.yandextest.Adapters.StoksRecyclerAdapter
+import com.varenie.yandextest.DataBase.TableStocks
 import com.varenie.yandextest.DataClasses.News
 import com.varenie.yandextest.DataClasses.Stocks
 import com.varenie.yandextest.R
@@ -30,10 +32,34 @@ class NewsActivity : AppCompatActivity() {
         binding.rvNews.layoutManager = LinearLayoutManager(this@NewsActivity)
         binding.rvNews.setHasFixedSize(true)
 
+        var isChosen = false
         val intent = intent
         val ticker = intent?.getStringExtra("ticker")
 
         binding.tvSymbol.text = ticker
+        val tableStocks = TableStocks(this)
+
+        if (tableStocks.isFavourite(ticker)){
+            binding.ivStar.setImageResource(R.drawable.star_chosen)
+            isChosen = true
+        }
+
+        binding.ivStar.setOnClickListener {
+            if (isChosen) {
+                tableStocks.deleteFavourite(ticker)
+                binding.ivStar.setImageResource(R.drawable.star_unchosen)
+                isChosen = false
+            } else {
+                val stock = tableStocks.getStock(ticker)
+                tableStocks.addFavourite(stock)
+                binding.ivStar.setImageResource(R.drawable.star_chosen)
+                isChosen = true
+            }
+        }
+
+        binding.btnChart.setOnClickListener {
+            onBackPressed()
+        }
 
         GlobalScope.launch {
             val data = getNews(ticker)

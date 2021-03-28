@@ -1,8 +1,11 @@
 package com.varenie.yandextest.Adapters
 
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.startActivity
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
@@ -10,7 +13,8 @@ import com.varenie.yandextest.DataClasses.News
 import com.varenie.yandextest.R
 import com.varenie.yandextest.databinding.RecyclerItemNewsBinding
 
-class NewsRecyclerAdapter(private val size: Int,private val news: ArrayList<News>): RecyclerView.Adapter<NewsRecyclerAdapter.MyVHolder>() {
+
+class NewsRecyclerAdapter(private val size: Int, private val news: ArrayList<News>): RecyclerView.Adapter<NewsRecyclerAdapter.MyVHolder>() {
     lateinit var binding: RecyclerItemNewsBinding
 
     class MyVHolder(private val binding: RecyclerItemNewsBinding): RecyclerView.ViewHolder(binding.root) {
@@ -18,12 +22,22 @@ class NewsRecyclerAdapter(private val size: Int,private val news: ArrayList<News
             binding.tvSite.text = news[position].site
             binding.tvTitle.text = news[position].title
             binding.tvDate.text = news[position].date
-            binding.tvUrl.text = "<u>${news[position].url}</u>"
+            //binding.tvUrl.text = news[position].url
             binding.tvText.text = news[position].text
 
             Log.e("NEWSCHECK", "${news[position].text}")
 
-            Picasso.get().load(news[position].image).into(binding.ivNewsLogo)
+            Picasso.get()
+                    .load(news[position].image)
+                    .resize(100, 100)
+                    .centerCrop()
+                    .into(binding.ivNewsLogo)
+
+            binding.tvUrl.setOnClickListener {
+                val context = binding.root.context
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(news[position].url))
+                context.startActivity(browserIntent)
+            }
         }
     }
 

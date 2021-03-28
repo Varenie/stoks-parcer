@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.YAxis
@@ -83,7 +84,13 @@ class ChartActivity : AppCompatActivity() {
             if (history != null) {
                 for ((i, x) in history.withIndex()) {
                     entries.add(Entry(i.toFloat(), x.close))
-                    dates.add(x.date)
+
+                    //форматирование значения даты, так как оно слишком длинное
+                    val date = x.date.substringBefore(" ").substringAfter("-").replace("-", ".")
+                    val time = x.date.substringAfter(" ").substringBeforeLast(":")
+                    val result = "$date $time"
+                    dates.add(result)
+
                     prices.add(x.close)
                 }
             }
@@ -95,11 +102,13 @@ class ChartActivity : AppCompatActivity() {
 
             val dataSet = LineDataSet(entries, "Акции")
             dataSet.axisDependency = YAxis.AxisDependency.LEFT
+
             //настройки линии
             dataSet.color = Color.RED
             dataSet.lineWidth = 2f
             dataSet.setCircleColor(Color.RED)
 
+            // настройки отображения при разных темах телефона
             when (currentNightMode) {
                 Configuration.UI_MODE_NIGHT_NO -> { // Night mode is not active, we're using the light theme
                     dataSet.valueTextColor = Color.BLACK
@@ -116,12 +125,12 @@ class ChartActivity : AppCompatActivity() {
             runOnUiThread {
                 binding.chart.data = lineData
 
-
                 binding.chart.axisRight.isEnabled = false
                 binding.chart.xAxis.valueFormatter = MyAxisFormatter(dates) //отображение дат
                 binding.chart.description.isEnabled = false
                 binding.chart.setDrawBorders(true)
                 binding.chart.invalidate() // refresh
+                binding.chart.animateY(1000 , Easing.Linear )
 
                 val leftAxis = binding.chart.axisLeft
                 leftAxis.setDrawAxisLine(false)
@@ -145,11 +154,13 @@ class ChartActivity : AppCompatActivity() {
                         lMax?.textColor = Color.BLACK
                         lMin?.textColor = Color.BLACK
                         binding.chart.description.textColor = Color.BLACK
+                        binding.chart.xAxis.textColor = Color.BLACK
                     }
                     Configuration.UI_MODE_NIGHT_YES -> {// Night mode is active, we're using dark theme
                         lMax?.textColor = Color.WHITE
                         lMin?.textColor = Color.WHITE
                         binding.chart.legend.textColor = Color.WHITE
+                        binding.chart.xAxis.textColor = Color.WHITE
                     }
                 }
 

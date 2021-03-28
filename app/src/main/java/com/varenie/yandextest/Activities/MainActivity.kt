@@ -1,6 +1,6 @@
 package com.varenie.yandextest.Activities
 
-import android.graphics.Color
+import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.SearchView
@@ -60,26 +60,30 @@ class MainActivity : AppCompatActivity() {
 
         loadStocks(ID_STOCkS_PAGE)
 
-        binding.btnStocks.setBackgroundColor(Color.parseColor("#FF6200EE"))
+        binding.btnStocks.textSize = 20f
+        binding.btnStocks.typeface = Typeface.DEFAULT_BOLD
 
+//        Изменение вида кнопки при переключении между разделами
         binding.btnFavourites.setOnClickListener {
             loadStocks(ID_FAVOURITES_PAGE)
-            binding.btnFavourites.setBackgroundColor(Color.parseColor("#FF6200EE"))
-            binding.btnStocks.setBackgroundColor(Color.parseColor("#121212"))
+            binding.btnFavourites.textSize = 20f
+            binding.btnFavourites.typeface = Typeface.DEFAULT_BOLD
+            binding.btnStocks.textSize = 14f
+            binding.btnStocks.typeface = Typeface.DEFAULT
         }
 
         binding.btnStocks.setOnClickListener {
             loadStocks(ID_STOCkS_PAGE)
-            binding.btnFavourites.setBackgroundColor(Color.parseColor("#121212"))
-            binding.btnStocks.setBackgroundColor(Color.parseColor("#FF6200EE"))
+            binding.btnStocks.textSize = 20f
+            binding.btnStocks.typeface = Typeface.DEFAULT_BOLD
+            binding.btnFavourites.textSize = 14f
+            binding.btnFavourites.typeface = Typeface.DEFAULT
         }
 
 
 
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-
-
                 if (isRightQuery(query) && query != null) {
                     val upperQuery = query.toUpperCase()
                     loadStocks(ID_SEARCH_PAGE, upperQuery)
@@ -98,7 +102,8 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun isRightQuery(query: String?): Boolean {
+
+    private fun isRightQuery(query: String?): Boolean { // проверяет, чтобы ввод содрежал только латинские буквы
         val queryPattern = Pattern.compile("[a-zA-Z]+?")
         return queryPattern.matcher(query).matches()
     }
@@ -183,9 +188,7 @@ class MainActivity : AppCompatActivity() {
             val response: String = it.get("$BASE_URL/actives?apikey=$TOKEN")
             val gson = Gson()
 
-            val stocks = gson.fromJson(response, Array<Stocks>::class.java).toCollection(ArrayList<Stocks>())
-
-            return stocks
+            return gson.fromJson(response, Array<Stocks>::class.java).toCollection(ArrayList())
         }
     }
 }

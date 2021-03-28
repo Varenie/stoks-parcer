@@ -1,6 +1,7 @@
 package com.varenie.yandextest.Adapters
 
 import android.content.Intent
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.Drawable
@@ -38,7 +39,7 @@ class StoksRecyclerAdapter(private val size: Int, private val stocks: ArrayList<
         fun bind(position: Int, stocks: ArrayList<Stocks>){
             binding.tvStockName.text = stocks[position].symbol
             binding.tvCompanyName.text = stocks[position].name
-            binding.tvStockCost.text = stocks[position].price.toString()
+            binding.tvStockCost.text = "\$ ${stocks[position].price}"
 
             val percent = stocks[position].percent
             val percentFormat = percent.substringBefore("%").substringAfter("+").substringAfter("-")// api возвращает проценты либо в формате (+3.12%), либо 0.07000000. Для этогт приводим к общему виду
