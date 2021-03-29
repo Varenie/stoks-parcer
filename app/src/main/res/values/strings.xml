@@ -9,4 +9,6 @@
     <string name="date">22.02.2020</string>
     <string name="url">More info...</string>
     <string name="some_text">Some text</string>
+    <string name="nasdaq">NASDAQ</string>
+    <string name="usd">USD</string>
 </resources>

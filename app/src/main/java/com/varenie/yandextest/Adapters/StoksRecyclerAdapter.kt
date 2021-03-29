@@ -1,10 +1,7 @@
 package com.varenie.yandextest.Adapters
 
 import android.content.Intent
-import android.content.res.Configuration
-import android.content.res.Resources
 import android.graphics.Color
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +22,7 @@ class StoksRecyclerAdapter(private val size: Int, private val stocks: ArrayList<
     class MyVHolder(private val binding: RecyclerItemStocksBinding): RecyclerView.ViewHolder(binding.root) {
         val context = binding.root.context
 
-//        клик на элемент
+        //        клик на элемент
         init {
             super.itemView
             itemView.setOnClickListener(View.OnClickListener {
@@ -56,14 +53,14 @@ class StoksRecyclerAdapter(private val size: Int, private val stocks: ArrayList<
                 binding.tvStockChange.text ="${stocks[position]?.change} (+${df.format(percentNum)}%)"
             }
 
-            val tableFavourites = TableStocks(context)
+            val tableStocks = TableStocks(context)
             val stock = stocks[position]
 
             var isChosen = false
             val ticker = binding.tvStockName.text.toString()
 
 //            Зажиагет звездочку, если акция была в избранном
-            if (tableFavourites.isFavourite(ticker)) {
+            if (tableStocks.isFavourite(ticker)) {
                 binding.ivStar.setImageResource(R.drawable.star_chosen)
                 isChosen = true
 
@@ -79,12 +76,12 @@ class StoksRecyclerAdapter(private val size: Int, private val stocks: ArrayList<
 //                Добавляет или удаляет акцию из избранного
                 if (!isChosen) {
                     binding.ivStar.setImageResource(R.drawable.star_chosen)
-                    //isChosen = true
-                    tableFavourites.addFavourite(stock)
+                    isChosen = true
+                    tableStocks.addFavourite(stock)
                 } else {
                     binding.ivStar.setImageResource(R.drawable.star_unchosen)
-                    //isChosen = false
-                    tableFavourites.deleteFavourite(ticker)
+                    isChosen = false
+                    tableStocks.deleteFavourite(ticker)
                 }
             }
         }
@@ -104,6 +101,4 @@ class StoksRecyclerAdapter(private val size: Int, private val stocks: ArrayList<
     override fun getItemCount(): Int {
         return size
     }
-
-
 }

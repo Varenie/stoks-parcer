@@ -8,8 +8,10 @@ import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
+import com.varenie.yandextest.Adapters.SearchRecyclerAdapter
 import com.varenie.yandextest.Adapters.StoksRecyclerAdapter
 import com.varenie.yandextest.DataBase.TableStocks
+import com.varenie.yandextest.DataClasses.SearchResponse
 import com.varenie.yandextest.DataClasses.Stocks
 import com.varenie.yandextest.DataClasses.StocksFavourites
 import com.varenie.yandextest.R
@@ -29,7 +31,7 @@ class MainActivity : AppCompatActivity() {
     private val TOKEN = "24eb674774bb515d57e84b21973fd4cb"
     private val BASE_URL = "https://financialmodelingprep.com/api/v3"
 
-    private val ID_STOCkS_PAGE = 0
+    private val ID_STOCKS_PAGE = 0
     private val ID_FAVOURITES_PAGE = 1
     private val ID_SEARCH_PAGE = 2
 
@@ -40,7 +42,7 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
         binding.rvStocks.layoutManager = LinearLayoutManager(this)
-        binding.rvStocks.setHasFixedSize(true)
+        binding.rvStocks.setHasFixedSize(false)
 
         val tableStocks = TableStocks(this)
 
@@ -58,7 +60,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        loadStocks(ID_STOCkS_PAGE)
+        loadStocks(ID_STOCKS_PAGE)
 
         binding.btnStocks.textSize = 20f
         binding.btnStocks.typeface = Typeface.DEFAULT_BOLD
@@ -73,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnStocks.setOnClickListener {
-            loadStocks(ID_STOCkS_PAGE)
+            loadStocks(ID_STOCKS_PAGE)
             binding.btnStocks.textSize = 20f
             binding.btnStocks.typeface = Typeface.DEFAULT_BOLD
             binding.btnFavourites.textSize = 14f
@@ -118,7 +120,7 @@ class MainActivity : AppCompatActivity() {
             tableStocks.addCashe(defaultStocks) //загружаем в таблицу новые значения
 
             val tickers = tableStocks.getTickers()  //берем избранных тикеров, для обновления информации о них
-            val favouriteStocks = getSearchRequest(tickers)
+            val favouriteStocks = getTickerRequest(tickers)
 
             for(stock in  favouriteStocks) { // обновляем данные для каждого тикера
                 tableStocks.updateFavourite(stock)
@@ -133,19 +135,19 @@ class MainActivity : AppCompatActivity() {
 
             val tableStocks = TableStocks(this@MainActivity)
             var data = ArrayList<Stocks>()
+            var searchResponse = ArrayList<SearchResponse>()
 
             when(idPage){
-                ID_STOCkS_PAGE -> {
+                ID_STOCKS_PAGE -> {
                     data = tableStocks.getCasheStocks()
                 }
 
                 ID_FAVOURITES_PAGE -> {
-
-                    data  = tableStocks.getFavourites()
+                    data = tableStocks.getFavourites()
                 }
 
                 ID_SEARCH_PAGE -> {
-                    data = getSearchRequest(query)
+                    searchResponse = getSearchRequest(query)
                 }
 
             }
@@ -153,15 +155,20 @@ class MainActivity : AppCompatActivity() {
 
             //работа в основном потоке
             runOnUiThread {
-                val adapter = StoksRecyclerAdapter(data.size, data)
-                binding.rvStocks.adapter = adapter
+                if (idPage != ID_SEARCH_PAGE) {
+                    val adapter = StoksRecyclerAdapter(data.size, data)
+                    binding.rvStocks.adapter = adapter
+                } else {
+                    val adapter = SearchRecyclerAdapter(searchResponse)
+                    binding.rvStocks.adapter = adapter
+                }
             }
 
         }
     }
 
 
-    private suspend fun getSearchRequest(tickers: String): ArrayList<Stocks> {
+    private suspend fun getTickerRequest(tickers: String): ArrayList<Stocks> {
 
         HttpClient().use {
             if (tickers.compareTo("") != 0) {
@@ -180,6 +187,15 @@ class MainActivity : AppCompatActivity() {
             } else {
                 return arrayListOf()
             }
+        }
+    }
+
+    private suspend fun getSearchRequest(query: String): ArrayList<SearchResponse> {
+        HttpClient().use {
+            val response: String = it.get("$BASE_URL/search?query=$query&limit=20&apikey=$TOKEN")
+            val gson = Gson()
+
+            return gson.fromJson(response, Array<SearchResponse>::class.java).toCollection(ArrayList())
         }
     }
 
