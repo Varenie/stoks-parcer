@@ -1,10 +1,13 @@
 package com.varenie.yandextest.Adapters
 
+import android.content.Intent
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
+import com.varenie.yandextest.Activities.ChartActivity
 import com.varenie.yandextest.DataBase.TableStocks
 import com.varenie.yandextest.DataClasses.SearchResponse
 import com.varenie.yandextest.DataClasses.Stocks
@@ -21,9 +24,20 @@ class SearchRecyclerAdapter(private val searchResponse: ArrayList<SearchResponse
     lateinit var binding: RecyclerItemSearchBinding
 
     class MyVHolder(private val binding: RecyclerItemSearchBinding): RecyclerView.ViewHolder(binding.root) {
-
         private val TOKEN = "24eb674774bb515d57e84b21973fd4cb"
         private val BASE_URL = "https://financialmodelingprep.com/api/v3"
+
+        val context = binding.root.context
+
+        init {
+            super.itemView
+            itemView.setOnClickListener(View.OnClickListener {
+
+                val intent = Intent(context, ChartActivity::class.java)
+                intent.putExtra("ticker", binding.tvStockName.text)
+                context.startActivity(intent)
+            })
+        }
 
         fun bind(position: Int, searchResponse: ArrayList<SearchResponse>) {
             binding.tvStockName.text = searchResponse[position].symbol
@@ -31,7 +45,7 @@ class SearchRecyclerAdapter(private val searchResponse: ArrayList<SearchResponse
             binding.tvCurrency.text = searchResponse[position].currency
             binding.tvStockExchange.text = searchResponse[position].stockExchange
 
-            val tableStocks = TableStocks(binding.root.context)
+            val tableStocks = TableStocks(context)
             var isChosen = false
             val ticker = binding.tvStockName.text.toString()
 
