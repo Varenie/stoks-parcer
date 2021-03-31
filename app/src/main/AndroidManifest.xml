@@ -12,9 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.YandexTest"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activities.NewsActivity"></activity>
+        <activity android:name=".Activities.NewsActivity"
+            android:screenOrientation="portrait"/>
         <activity android:name=".Activities.ChartActivity" />
-        <activity android:name=".Activities.MainActivity">
+        <activity android:name=".Activities.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
